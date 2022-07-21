@@ -2,10 +2,7 @@
 title: "Lab 10 - Grading the professor, Pt. 1"
 subtitle: "Modelling with a single predictor"
 output: 
-  tufte::tufte_html:
-    tufte_variant: "envisioned"
-    highlight: pygments
-    css: ../lab.css
+  html_document
 link-citations: yes
 ---
 
@@ -32,7 +29,7 @@ In addition, six students rated the professors' physical appearance.
 
 # Getting started
 
-Go to the course GitHub organization and locate your homework repo, clone it in RStudio and open the R Markdown document.
+Go to the course GitHub organization and locate your lab repo, clone it in RStudio and open the R Markdown document.
 Knit the document to make sure it compiles without errors.
 
 ## Warm up
@@ -45,7 +42,7 @@ If anything is missing, commit and push again.
 
 ## Packages
 
-We'll use the **tidyverse** package for much of the data wrangling and visualisation, the **tidymodels** package for modeling and inference, and the data lives in the **dsbox** package.
+We'll use the **tidyverse** package for much of the data wrangling and visualization, the **tidymodels** package for modeling and inference, and the data lives in the **dsbox** package.
 These packages are already installed for you.
 You can load them by running the following in your Console:
 
@@ -72,8 +69,29 @@ You can also find this information [here](https://www.openintro.org/data/index.p
     Is this what you expected to see?
     Why, or why not?
     Include any summary statistics and visualizations you use in your response.
+    
+```{r exercise-1}
+evals%>%
+  ggplot(aes(x = score)) + 
+  geom_histogram()
+
+```
+    
+    
+    **There is a left skew to the data. It appears that students are rating courses pretty highly and not giving a lot of negative reviews.**
+    **Lots of reasons to expect either one**
 
 2.  Visualize and describe the relationship between `score` and `bty_avg`.
+
+```{r exercise-2}
+evals%>%
+  ggplot(aes(x = score, y = bty_avg)) + 
+  geom_point()
+
+```
+
+**It is a bit hard to see things, but it seems like maybe there is a positive association between rating and beauty scores**
+
 
 ```{marginfigure}
 **Hint:** See the help page for the function at http://ggplot2.tidyverse.org/reference/index.html.
@@ -81,6 +99,15 @@ You can also find this information [here](https://www.openintro.org/data/index.p
 
 3.  Recreate the scatterplot from Exercise 2, but this time use\
     `geom_jitter()`? What does "jitter" mean? What was misleading about the initial scatterplot?
+    
+```{r exervise-3}
+evals%>%
+  ggplot(aes(x = score, y = bty_avg)) + 
+  geom_jitter()
+
+```
+    
+    **Jitter is basically slightly moving the points. It makes it a lot easier to see things. The original scatterplot had a lot of values stacked up on each other**
 
 🧶 ✅ ⬆️ *If you haven't done so recently, knit, commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
 
