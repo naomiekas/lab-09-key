@@ -485,7 +485,7 @@ beauty rating (<code>bty_avg</code>).</li>
 </ol>
 <pre class="r"><code>score_bty_fit &lt;- linear_reg() %&gt;%
   set_engine(&quot;lm&quot;) %&gt;%
-  fit(bty_avg ~ score, data = evals)
+  fit(score ~ bty_avg, data = evals)
   tidy(score_bty_fit)</code></pre>
 <ol start="5" style="list-style-type: decimal">
 <li>Recreate the scatterplot from Exercise 2, and add the regression
@@ -493,14 +493,14 @@ line to this plot in orange color, with shading for the uncertainty of
 the line turned off.</li>
 </ol>
 <pre class="r"><code>evals%&gt;%
-  ggplot(aes(x = score, y = bty_avg)) + 
+  ggplot(aes(x = bty_avg, y = score)) + 
   geom_point() + 
   geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;orange&quot;)</code></pre>
 <ol start="6" style="list-style-type: decimal">
 <li>Interpret the slope of the linear model in context of the data.</li>
 </ol>
 <p><strong>For every unit increase in beauty ratings the students’
-ratings of the teacher increased by .526</strong></p>
+ratings of the teacher increased by .0666</strong></p>
 <ol start="7" style="list-style-type: decimal">
 <li><p>Interpret the intercept of the linear model in context of the
 data. Comment on whether or not the intercept makes sense in this
@@ -522,38 +522,84 @@ afterwards.</em></p>
 <div id="linear-regression-with-a-categorical-predictor" class="section level2">
 <h2>Linear regression with a categorical predictor</h2>
 <ol start="9" style="list-style-type: decimal">
-<li><p>Fit a new linear model called <code>score_gender_fit</code> to
+<li>Fit a new linear model called <code>score_gender_fit</code> to
 predict average professor evaluation <code>score</code> based on
-<code>gender</code> of the professor. Based on the regression output,
-write the linear model and interpret the slope and intercept in context
-of the data.</p></li>
+<code>gender</code> of the professor. Interpret the slope and intercept
+in context of the data.</li>
+</ol>
+<pre class="r"><code>score_gender_fit &lt;- linear_reg() %&gt;%
+  set_engine(&quot;lm&quot;) %&gt;%
+  fit(score ~ gender, data = evals)
+  tidy(score_gender_fit)</code></pre>
+<pre><code>**The rating for females is 4.09 and for males it is higher by .142**</code></pre>
+<ol start="10" style="list-style-type: decimal">
 <li><p>What is the equation of the line corresponding to male
-professors? What is it for female professors?</p></li>
+professors? What is it for female professors?</p>
+<p><strong>Female is the baseline level because R uses alphabetical and
+we can also see the output referencing gendermale</strong> <strong>Score
+= 4.09 + .142(1 = male)</strong> <strong>score = 4.09 + .142(0 =
+female</strong>)</p></li>
 <li><p>Fit a new linear model called <code>score_rank_fit</code> to
 predict average professor evaluation <code>score</code> based on
 <code>rank</code> of the professor. Based on the regression output,
-write the linear model and interpret the slopes and intercept in context
-of the data.</p></li>
-<li><p>Create a new variable called <code>rank_relevel</code> where
-<code>&quot;tenure track&quot;</code> is the baseline level.</p></li>
-<li><p>Fit a new linear model called <code>score_rank_relevel_fit</code>
-to predict average professor evaluation <code>score</code> based on
+interpret the slopes and intercept in context of the data.</p></li>
+</ol>
+<pre class="r"><code>score_rank_fit &lt;- linear_reg() %&gt;%
+  set_engine(&quot;lm&quot;) %&gt;%
+  fit(score ~ rank, data = evals)
+  tidy(score_rank_fit)</code></pre>
+<pre><code>**Looks like rank has 3 levels because we have 2 dummy codes. Based on codebook, it looks like teaching is the baseline.**
+**The rating for teaching professors is, on average, 4.28**
+**The rating for tenure track professors is .13 points lower**
+**The rating for tenured is .145 lower than teaching**</code></pre>
+<ol start="12" style="list-style-type: decimal">
+<li>Create a new variable called <code>rank_relevel</code> where
+<code>&quot;tenure track&quot;</code> is the baseline level.</li>
+</ol>
+<pre class="r"><code>evals &lt;- evals%&gt;%
+  mutate(rank_relevel = fct_relevel(rank, c(&quot;tenure track&quot;, &quot;teaching&quot;, &quot;tenured&quot;)))</code></pre>
+<ol start="13" style="list-style-type: decimal">
+<li>Fit a new linear model called <code>score_rank_relevel_fit</code> to
+predict average professor evaluation <code>score</code> based on
 <code>rank_relevel</code> of the professor. This is the new (releveled)
 variable you created in Exercise 12. Based on the regression output,
-write the linear model and interpret the slopes and intercept in context
-of the data. Also determine and interpret the <span class="math inline">\(R^2\)</span> of the model.</p></li>
-<li><p>Create another new variable called <code>tenure_eligible</code>
-that labels <code>&quot;teaching&quot;</code> faculty as <code>&quot;no&quot;</code> and
-labels <code>&quot;tenure track&quot;</code> and <code>&quot;tenured&quot;</code> faculty as
-<code>&quot;yes&quot;</code>.</p></li>
-<li><p>Fit a new linear model called
-<code>score_tenure_eligible_fit</code> to predict average professor
-evaluation <code>score</code> based on <code>tenure_eligible</code>ness
-of the professor. This is the new (regrouped) variable you created in
-the previous exercise. Based on the regression output, write the linear
-model and interpret the slopes and intercept in context of the data.
-Also determine and interpret the <span class="math inline">\(R^2\)</span> of the model.</p></li>
+interpret the slopes and intercept in context of the data. Also
+determine and interpret the <span class="math inline">\(R^2\)</span> of
+the model.</li>
 </ol>
+<pre class="r"><code>score_rank_relevel_fit &lt;- linear_reg() %&gt;%
+  set_engine(&quot;lm&quot;) %&gt;%
+  fit(score ~ rank_relevel, data = evals)
+  tidy(score_rank_relevel_fit)</code></pre>
+<pre><code>**The intercept for tenure track is 4.15**
+**Teaching rank is .13 higher than tenure track**
+**tenured is .0155 lower than tenure track**</code></pre>
+<pre class="r"><code>glance(score_rank_relevel_fit)$r.squared</code></pre>
+<pre><code>**R squared is .011**</code></pre>
+<ol start="14" style="list-style-type: decimal">
+<li>Create another new variable called <code>tenure_eligible</code> that
+labels <code>&quot;teaching&quot;</code> faculty as <code>&quot;no&quot;</code> and labels
+<code>&quot;tenure track&quot;</code> and <code>&quot;tenured&quot;</code> faculty as
+<code>&quot;yes&quot;</code>.</li>
+</ol>
+<pre class="r"><code>evals &lt;- evals%&gt;%
+  mutate(tenure_eligible = case_when(rank == &quot;teaching&quot; ~ &quot;no&quot;,
+                                     rank == &quot;tenure track&quot; ~ &quot;yes&quot;,
+                                     rank == &quot;tenured&quot; ~ &quot;yes&quot;))</code></pre>
+<ol start="15" style="list-style-type: decimal">
+<li>Fit a new linear model called <code>score_tenure_eligible_fit</code>
+to predict average professor evaluation <code>score</code> based on
+<code>tenure_eligible</code>ness of the professor. This is the new
+(regrouped) variable you created in the previous exercise. Based on the
+regression output, interpret the slopes and intercept in context of the
+data. Also determine and interpret the <span class="math inline">\(R^2\)</span> of the model.</li>
+</ol>
+<pre class="r"><code>score_tenure_eligible_fit &lt;- linear_reg() %&gt;%
+  set_engine(&quot;lm&quot;) %&gt;%
+  fit(score ~ tenure_eligible, data = evals)
+  tidy(score_tenure_eligible_fit)</code></pre>
+<pre><code>**Scores of non-eligible faculty average 4.28 and scores of eligible are .141 lower**</code></pre>
+<pre class="r"><code>glance(score_tenure_eligible_fit)$r.squared</code></pre>
 <p>🧶 ✅ ⬆️ Knit, <em>commit, and push your changes to GitHub with an
 appropriate commit message. Make sure to commit and push all changed
 files so that your Git pane is cleared up afterwards and review the md

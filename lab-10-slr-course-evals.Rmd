@@ -124,7 +124,7 @@ Linear model is in the form $\hat{y} = b_0 + b_1 x$.
 ```{r exercise-4}
 score_bty_fit <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(bty_avg ~ score, data = evals)
+  fit(score ~ bty_avg, data = evals)
   tidy(score_bty_fit)
   
 ```
@@ -134,7 +134,7 @@ score_bty_fit <- linear_reg() %>%
 
 ```{r exercise-5}
 evals%>%
-  ggplot(aes(x = score, y = bty_avg)) + 
+  ggplot(aes(x = bty_avg, y = score)) + 
   geom_point() + 
   geom_smooth(method = "lm", se = FALSE, color = "orange")
 ```
@@ -142,7 +142,7 @@ evals%>%
 
 6.  Interpret the slope of the linear model in context of the data.
 
-**For every unit increase in beauty ratings the students' ratings of the teacher increased by .526**
+**For every unit increase in beauty ratings the students' ratings of the teacher increased by .0666**
 
 7.  Interpret the intercept of the linear model in context of the data.
     Comment on whether or not the intercept makes sense in this context.
@@ -162,26 +162,100 @@ glance(score_bty_fit)$r.squared
 ## Linear regression with a categorical predictor
 
 9.  Fit a new linear model called `score_gender_fit` to predict average professor evaluation `score` based on `gender` of the professor.
-    Based on the regression output, write the linear model and interpret the slope and intercept in context of the data.
+    Interpret the slope and intercept in context of the data.
+    
+```{r exercise-9}
+score_gender_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ gender, data = evals)
+  tidy(score_gender_fit)
+```
+    
+    **The rating for females is 4.09 and for males it is higher by .142**
 
 10. What is the equation of the line corresponding to male professors?
     What is it for female professors?
+    
+    **Female is the baseline level because R uses alphabetical and we can also see the output referencing gendermale**
+    **Score = 4.09 + .142(1 = male)**
+    **score = 4.09 + .142(0 = female**)
 
 11. Fit a new linear model called `score_rank_fit` to predict average professor evaluation `score` based on `rank` of the professor.
-    Based on the regression output, write the linear model and interpret the slopes and intercept in context of the data.
+    Based on the regression output, interpret the slopes and intercept in context of the data.
+    
+```{r exercise-11}
+score_rank_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ rank, data = evals)
+  tidy(score_rank_fit)
+
+```
+    
+    **Looks like rank has 3 levels because we have 2 dummy codes. Based on codebook, it looks like teaching is the baseline.**
+    **The rating for teaching professors is, on average, 4.28**
+    **The rating for tenure track professors is .13 points lower**
+    **The rating for tenured is .145 lower than teaching**
 
 12. Create a new variable called `rank_relevel` where `"tenure track"` is the baseline level.
 
+```{r exercise-12}
+evals <- evals%>%
+  mutate(rank_relevel = fct_relevel(rank, c("tenure track", "teaching", "tenured")))
+```
+
+
 13. Fit a new linear model called `score_rank_relevel_fit` to predict average professor evaluation `score` based on `rank_relevel` of the professor.
     This is the new (releveled) variable you created in Exercise 12.
-    Based on the regression output, write the linear model and interpret the slopes and intercept in context of the data.
+    Based on the regression output, interpret the slopes and intercept in context of the data.
     Also determine and interpret the $R^2$ of the model.
+    
+```{r exercise-13}
+score_rank_relevel_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ rank_relevel, data = evals)
+  tidy(score_rank_relevel_fit)
+
+```
+    
+    **The intercept for tenure track is 4.15**
+    **Teaching rank is .13 higher than tenure track**
+    **tenured is .0155 lower than tenure track**
+    
+```{r exercise-13r2}
+glance(score_rank_relevel_fit)$r.squared
+```
+    
+    **R squared is .011**
 
 14. Create another new variable called `tenure_eligible` that labels `"teaching"` faculty as `"no"` and labels `"tenure track"` and `"tenured"` faculty as `"yes"`.
 
+```{r exercise-14}
+evals <- evals%>%
+  mutate(tenure_eligible = case_when(rank == "teaching" ~ "no",
+                                     rank == "tenure track" ~ "yes",
+                                     rank == "tenured" ~ "yes"))
+
+```
+
+
 15. Fit a new linear model called `score_tenure_eligible_fit` to predict average professor evaluation `score` based on `tenure_eligible`ness of the professor.
     This is the new (regrouped) variable you created in the previous exercise.
-    Based on the regression output, write the linear model and interpret the slopes and intercept in context of the data.
+    Based on the regression output, interpret the slopes and intercept in context of the data.
     Also determine and interpret the $R^2$ of the model.
+    
+```{r exercise-15}
+score_tenure_eligible_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ tenure_eligible, data = evals)
+  tidy(score_tenure_eligible_fit)
+
+```
+    
+    **Scores of non-eligible faculty average 4.28 and scores of eligible are .141 lower**
+    
+```{r}
+glance(score_tenure_eligible_fit)$r.squared
+```
+    
 
 🧶 ✅ ⬆️ Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards and review the md document on GitHub to make sure you're happy with the final state of your work.*
