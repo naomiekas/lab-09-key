@@ -122,11 +122,11 @@ Linear model is in the form $\hat{y} = b_0 + b_1 x$.
    
     
 ```{r exercise-4}
-score_bty_fit <- linear_reg()%>%
-  set_engine("lm")%>%
-  fit(bty_avg ~ score, data = evals)%>%
-  tidy(score_bty_fit)%>%
-  print()
+score_bty_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(bty_avg ~ score, data = evals)
+  tidy(score_bty_fit)
+  
 ```
     
 
@@ -155,6 +155,7 @@ evals%>%
 glance(score_bty_fit)$r.squared
 ```
 
+**.035**
 
 🧶 ✅ ⬆️ *If you haven't done so recently, knit, commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
 

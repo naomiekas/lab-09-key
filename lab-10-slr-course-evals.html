@@ -483,11 +483,10 @@ natural variation. Fit a linear model called <code>score_bty_fit</code>
 to predict average professor evaluation <code>score</code> by average
 beauty rating (<code>bty_avg</code>).</li>
 </ol>
-<pre class="r"><code>score_bty_fit &lt;- linear_reg()%&gt;%
-  set_engine(&quot;lm&quot;)%&gt;%
-  fit(bty_avg ~ score, data = evals)%&gt;%
-  tidy(score_bty_fit)%&gt;%
-  print()</code></pre>
+<pre class="r"><code>score_bty_fit &lt;- linear_reg() %&gt;%
+  set_engine(&quot;lm&quot;) %&gt;%
+  fit(bty_avg ~ score, data = evals)
+  tidy(score_bty_fit)</code></pre>
 <ol start="5" style="list-style-type: decimal">
 <li>Recreate the scatterplot from Exercise 2, and add the regression
 line to this plot in orange color, with shading for the uncertainty of
@@ -514,6 +513,7 @@ possible rating is a 1.</strong></p></li>
 model and interpret it in context of the data.</p></li>
 </ol>
 <pre class="r"><code>glance(score_bty_fit)$r.squared</code></pre>
+<p><strong>.035</strong></p>
 <p>🧶 ✅ ⬆️ <em>If you haven’t done so recently, knit, commit, and push
 your changes to GitHub with an appropriate commit message. Make sure to
 commit and push all changed files so that your Git pane is cleared up
