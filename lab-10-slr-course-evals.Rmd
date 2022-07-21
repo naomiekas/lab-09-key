@@ -119,16 +119,42 @@ Linear model is in the form $\hat{y} = b_0 + b_1 x$.
 
 4.  Let's see if the apparent trend in the plot is something more than natural variation.
     Fit a linear model called `score_bty_fit` to predict average professor evaluation `score` by average beauty rating (`bty_avg`).
-    Based on the regression output, write the linear model.
+   
+    
+```{r exercise-4}
+score_bty_fit <- linear_reg()%>%
+  set_engine("lm")%>%
+  fit(bty_avg ~ score, data = evals)%>%
+  tidy(score_bty_fit)%>%
+  print()
+```
+    
 
-5.  Recreate the scatterplot from Exercise 2, and add the regression line to this plot in orange colour, with shading for the uncertainty of the line turned off.
+5.  Recreate the scatterplot from Exercise 2, and add the regression line to this plot in orange color, with shading for the uncertainty of the line turned off.
+
+```{r exercise-5}
+evals%>%
+  ggplot(aes(x = score, y = bty_avg)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, color = "orange")
+```
+
 
 6.  Interpret the slope of the linear model in context of the data.
 
+**For every unit increase in beauty ratings the students' ratings of the teacher increased by .526**
+
 7.  Interpret the intercept of the linear model in context of the data.
     Comment on whether or not the intercept makes sense in this context.
+    
+    **For professors with a rating of 0 for beauty, their score is 2.22. Yes, it could make sense if there was a theoretical rating of zero. However, when I look at the codebook using ?evals the lowest possible rating is a 1.**
 
 8.  Determine the $R^2$ of the model and interpret it in context of the data.
+
+```{r exercise-8}
+glance(score_bty_fit)$r.squared
+```
+
 
 🧶 ✅ ⬆️ *If you haven't done so recently, knit, commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
 
